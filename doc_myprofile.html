@@ -1,0 +1,453 @@
+<!doctype html>
+<html>
+<head>
+  <title>Username | MDSC</title>
+  <meta charset="utr-8">
+
+  <style>
+
+    header{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+    #topbar{
+      height: 45px;
+      background-color: #cfcfcf;
+      padding: 5px;
+      font-weight: bold;
+      align-items: center;
+    }
+    #topbar #logo{
+      width: 40px;
+      height: 40px;
+    }
+    #topbar #search{
+      height: 30px;
+
+    }
+    #topbar #searching{
+      height: 30px;
+      width: 30px;
+    }
+    #topbar #checkauth{
+      height: 35px;
+      width: 35px;
+    }
+    body{
+      margin-top: 100px;
+      margin-left: 200px;
+      margin-right: 200px;
+    }
+
+    #myprofile #myimg img{
+      width: 140px;
+      height: auto;
+    }
+    #myprofile{
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      line-height: 30px;
+      margin-bottom: 50px;
+    }
+    #sort{
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    #sort input{
+      height: 40px;
+      font-size: 20px;
+    }
+    #outline{
+      background-color: #e3f6ff;
+      padding-top: 30px;
+    }
+    .cardoutline{
+      background-color: #fffde3;
+      width: 80%;
+      margin-left: 80px;
+      margin-bottom: 40px;
+    }
+    .basicinfo{
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 180px 1fr 1fr;
+    }
+    .basicinfo img{
+      width: 150px;
+      height: auto;
+    }
+    .medicaldata{
+      display: grid;
+      grid-template-columns: 30px 1fr;
+    }
+    .medicaldata img{
+      width: 25px;
+      height: auto;
+    }
+    .remove{
+      display: none;
+    }
+    #message .title{
+      margin-top: 10px;
+      text-align: left;
+      font-size: 18px;
+    }
+    #message .chat{
+      background-color: #e3f6ff;
+      padding-bottom: 30px;
+      padding-top: 20px;
+    }
+    #message .chatoutline{
+      background-color: #fffde3;
+      width: 80%;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      margin-left: 80px;
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      padding: 10px;
+    }
+    #message .chatoutline img{
+      width: 100px;
+      height: auto;
+    }
+    #message .startchat{
+      margin-left: 30px;
+    }
+    #message .startchat .chatusername{
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+
+  </style>
+
+  <!--jquery, cookie import-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+</head>
+
+<script type="text/javascript">
+  
+</script>
+
+<!-- header is top - bar-->
+<header>
+  <div id='topbar'>
+    <img src="{{url_for('static',filename='images/logo.png')}}" id = 'logo'/>
+    <input type='text' placeholder="Search Doctor" id='search' />
+    <img src="{{url_for('static',filename='images/search.png')}}" id='searching' />
+    <img src="{{url_for('static',filename='images/auth.png')}}" id='checkauth' />
+    <input type='button' value='LOGOUT' />
+  </div>
+</header>
+
+<body>
+  <!--this is basic profile-->
+  <div id='myprofile'>
+    <div id='myimg'>
+      <img src="{{url_for('static',filename='images/dongwook.png')}}" />
+    </div>
+    <div id='basicquestion'>
+      <span>Name: </span><br />
+      <span>Specialty: </span><br />
+      <span>Education: </span><br />
+      <span>Training Center: </span><br />
+      <span>Career: </span><br />
+
+    </div>
+
+    <div id='basicanswer'>
+      <span id='name'>Dongwook Kim</span><br />
+      <span id='specialty'>Orthopedic</span><br />
+      <span id='education'>Korea University College of Medicine</span><br />
+      <span id='traningcenter'>Samsung Seoul Hospital</span><br />
+      <span id='career'>Captain of Republic of Korea AirForce, Member of Orthopedic Association</span><br />
+    </div>
+  </div>
+
+  <!--this is medical data-->
+  <div id='sort'>
+    <input type="button" value="Patient" name='#outline' onclick='Patient_data_got(); sectionselect(this.name);'/>
+    <input type="button" value="MESSAGE" name='#message' onclick='Message_got(); sectionselect(this.name)'/>
+    <input type="button" value="ADD LATER" name='#addlater2' onclick='sectionselect(this.name)'/>
+    <input type="button" value="ADD LATER" name='#addlater3' onclick='sectionselect(this.name)'/>
+  </div>
+
+  <div id='outline' class = 'wMF_files' class='remove'>
+  </div>
+  <div id='message' class='remove' >
+    <div class= 'title'>
+      <div class = 'friend'>
+        <h2>YOUR CHAT</h2>
+      </div>
+      <div class = 'message'>
+      </div>
+    </div>
+    <div class='chat'> <!--전체 채팅 outline 정의-->
+
+
+    </div>
+
+  </div>
+  <div id='addlater2' class='remove' >
+    bbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  </div>
+  <div id='addlater3' class='remove' >
+    ccccccccccccccccccccccccccccccccccc
+  </div>
+
+  <script type="text/javascript">
+    var p_id=''
+    $(document).ready(function(){
+      $('div').filter('#outline').removeClass('remove');
+      $.ajax({
+        type:"POST",
+        url:'/Patient_data_got',
+        success: function(response){
+          console.log(response['result'])
+          if (response['result'] == 'success'){
+            let resp = response['Data']
+            let resp_length = Object.keys(resp).length
+            console.log(response['result'])
+            console.log(Object.keys(resp).length);
+            for(i = 0; i<resp_length; i++){
+              console.log(response['result'])
+              let count = i
+              let Age = resp[i]['Age']
+              let Doct = resp[i]['Doct']
+              let Drinking_Statue = resp[i]['Drinking Statue']
+              let Expired_date = resp[i]['Expired date']
+              let Family_Run_Diseases = resp[i]['Family Run Diseases']
+              let Patient_name = resp[i]['Patient_name']
+              let Sex = resp[i]['Sex']
+              let Smoke = resp[i]['Smoke']
+              let files = resp[i]['files']
+              let patient_id = resp[i]['id']
+              p_id = patient_id
+              let WMF_file_infomation =   '<div class="cardoutline" id="fcking'+count+'">\
+              <div class="basicinfo">\
+              <div>\
+              <img onclick="patient_profile()" src="{{url_for("static",filename="images/youngchae.png")}}" />\
+              </div>\
+              <div>\
+              <span>Name: </span><br />\
+              <span>Age: </span><br />\
+              <span>Sex: </span><br />\
+              <span>Familiy Run Diseases: </span><br />\
+              <span>Smoking / Drinking Statue: </span><br />\
+              </div>\
+              <div>\
+              <span class = "fd_Root_User_name_give" id="name">'+ Patient_name +'</span><br />\
+              <span id="sex">'+Sex+'</span><br />\
+              <span id="age">'+Age+'</span><br />\
+              <span id="familydisease">'+Family_Run_Diseases+'</span><br />\
+              <span id="smokedrink">'+ Smoke +'. '+Drinking_Statue+'</span><br />\
+              </div>\
+              <div>' + Expired_date ;
+              $('.wMF_files').append(WMF_file_infomation)
+              let files_length = Object.keys(files).length
+              console.log(files_length)
+              if(files !== null){
+                for(j = 0; j<files_length; j++){
+                  let file_name = files[j][0]
+                  let E_date = files[j][1]
+                  let WMF_files_Permission =
+                  '<div class="medicalinfo">\
+                  <span>Medical Data</span>\
+                  <div class="medicaldata">\
+                  <img src="{{url_for("static",filename="images/youngchae.png")}}" />\
+                  <span>' + file_name + '</span>\
+                  <span>' + E_date + '</span>\
+                  </div>\
+                  <br>\
+                  <br\
+                  </div>\
+                  <div>\
+                  </div>\
+                  </div>\
+                  </div>'
+                  $('#fcking'+count+'').append(WMF_files_Permission)
+                }
+              }
+            }
+          }
+        }})
+
+    })
+
+    function sectionselect(clicked_name){
+      console.log(1234123412341234);
+      console.log(clicked_name);
+      $('div').filter('#outline').addClass('remove');
+      $('div').filter('#message').addClass('remove');
+      $('div').filter('#addlater2').addClass('remove');
+      $('div').filter('#addlater3').addClass('remove');
+      $(clicked_name).removeClass('remove');
+    }
+
+
+
+    function Patient_data_got(){
+      $('#outline').empty();
+      $.ajax({
+        type:"POST",
+        url:'/Patient_data_got',
+        success: function(response){
+          console.log(response['result'])
+          if (response['result'] == 'success'){
+            let resp = response['Data']
+            let resp_length = Object.keys(resp).length
+            console.log(response['result'])
+            console.log(Object.keys(resp).length);
+            for(i = 0; i<resp_length; i++){
+              console.log(response['result'])
+              let Age = resp[i]['Age']
+              let Doct = resp[i]['Doct']
+              let Drinking_Statue = resp[i]['Drinking Statue']
+              let Expired_date = resp[i]['Expired date']
+              let Family_Run_Diseases = resp[i]['Family Run Diseases']
+              let Patient_name = resp[i]['Patient_name']
+              let Sex = resp[i]['Sex']
+              let Smoke = resp[i]['Smoke']
+              let files = resp[i]['files']
+              let patient_id = resp[i]['id']
+              p_id = patient_id
+              let WMF_file_infomation =   '<div class="cardoutline" id="fcking'+i+'">\
+              <div class="basicinfo">\
+              <div>\
+              <img onclick="patient_profile()" src="{{url_for("static",filename="images/youngchae.png")}}" />\
+              </div>\
+              <div>\
+              <span>Name: </span><br />\
+              <span>Age: </span><br />\
+              <span>Sex: </span><br />\
+              <span>Familiy Run Diseases: </span><br />\
+              <span>Smoking / Drinking Statue: </span><br />\
+              </div>\
+              <div>\
+              <span class = "fd_Root_User_name_give" id="name">'+ Patient_name +'</span><br />\
+              <span id="sex">'+Sex+'</span><br />\
+              <span id="age">'+Age+'</span><br />\
+              <span id="familydisease">'+Family_Run_Diseases+'</span><br />\
+              <span id="smokedrink">'+ Smoke +'. '+Drinking_Statue+'</span><br />\
+              </div>\
+              <div>' + Expired_date ;
+              $('.wMF_files').append(WMF_file_infomation)
+              let files_length = Object.keys(files).length
+              console.log(files_length)
+              if(files !== null){
+                for(j = 0; j<files_length; j++){
+                  let file_name = files[j][0]
+                  let E_date = files[j][1]
+                  let WMF_files_Permission =
+                  '<div class="medicalinfo">\
+                  <span>Medical Data</span>\
+                  <div class="medicaldata">\
+                  <img onclick="download()" value="' +patient_id+ '" id="download_patient_id" src="{{url_for("static",filename="images/youngchae.png")}}" />\
+                  <span onclick="download()" id="download_file_name">' + file_name + '</span>\
+                  <span>' + E_date + '</span>\
+                  </div>\
+                  <br>\
+                  <br\
+                  </div>\
+                  <div>\
+                  </div>\
+                  </div>\
+                  </div>'
+                  $('#fcking'+i+'').append(WMF_files_Permission)
+                }
+              }
+            }
+          }
+        }})
+    };
+
+    function Message_got(){
+      $.ajax({
+        type:"POST",
+        url:'/Message_got',
+        success: function(response){
+          if (response['result'] == 'success'){
+            let New_Chat = response['New_Chat']
+            let Chat = response['Chat']
+            if(New_Chat != null){
+              let New_Chat_length = Object.keys(New_Chat).length
+              for(i = 0; i<New_Chat_length; i++){
+                let Guest = New_Chat[i]['Guest']
+                let Host = New_Chat[i]['Host']
+                let MG_Data = 
+                '<div class="chatoutline"> <!--채팅 카드 outline 정의-->\
+                <div><!--image 넣는곳-->\
+                <img src="{{url_for("static",filename="images/youngchae.png")}}" />\
+                </div>\
+                <div class="startchat"><!--이름 채팅 내용 넣는곳-->\
+                <div class="chatusername">'+ Host + '</div>\
+                <div class="chatvalue">' + Host +'님이 초대하셨습니다.</div>\
+                </div>\
+                </div>'
+                if (New_Chat[i]['Did_he_see?'] == 'No'){
+                  $('.chat').append(MG_Data)
+                }
+              }
+            }
+            if(Chat != null){
+              let Chat_length = Object.keys(Chat).length
+              for(j = 0; j<Chat_length; j++){
+                let Who_call_me = Chat[j][0]
+                let What_he_said = Chat[j][1]
+                let MG2_Data =
+                '<div class="chatoutline"> <!--채팅 카드 outline 정의-->\
+                <div><!--image 넣는곳-->\
+                <img src="{{url_for("static",filename="images/youngchae.png")}}" />\
+                </div>\
+                <div class="startchat"><!--이름 채팅 내용 넣는곳-->\
+                <div class="chatusername">'+ Who_call_me + '</div>\
+                <a href = "http://localhost:5000/chat" class="chatvalue">' + What_he_said +'</a>\
+                </div>\
+                </div>'
+                $('.chat').append(MG2_Data)
+              }
+            }
+          }
+        }})
+    }
+
+    function patient_profile(){
+      console.log(p_id);
+      location.href = '/profile/'+p_id;
+    }
+
+    function download(){
+      console.log($('#download_file_name').val());
+      $(document).ready(function(){
+      $.ajax({
+        type:"POST",
+        url:'/download',
+        data:{
+         file_name_give : $('#download_file_name').text(),
+         Root_User_name : $('#download_patient_id').attr('value'),
+         Permission_Data : 'Download',
+         },
+       success: function(response){
+        if (response['result'] == 'success'){
+          alert('다운로드 !');
+          location.href = 'http://localhost:5000/file_download/'+ response['download_token']
+        }
+        else {
+          alert('안됨 !')
+        }
+      }
+    })
+    })
+    }
+
+  </script>
+
+</body>
+
+
+
+</html>

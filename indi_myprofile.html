@@ -1,0 +1,637 @@
+<!doctype html>
+<html>
+<head>
+  <title>Username | MDSC</title>
+  <meta charset="utr-8">
+
+  <!-- Modal cdn -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+  <style>
+
+    header{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+    #topbar{
+      height: 45px;
+      background-color: #cfcfcf;
+      padding: 5px;
+      font-weight: bold;
+      align-items: center;
+    }
+    #topbar #logo{
+      width: 40px;
+      height: 40px;
+    }
+    #topbar #search{
+      height: 30px;
+
+    }
+    #topbar #searching{
+      height: 30px;
+      width: 30px;
+    }
+    #topbar #checkauth{
+      height: 35px;
+      width: 35px;
+    }
+    body{
+      margin-top: 100px;
+      margin-left: 200px;
+      margin-right: 200px;
+    }
+
+    #myprofile #myimg img{
+      width: 140px;
+      height: auto;
+    }
+    #myprofile{
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      line-height: 30px;
+      margin-bottom: 50px;
+    }
+    .medicaldata{
+      border-bottom: solid gray 2px;
+      margin-bottom: 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    .medicaldata input{
+      height: 40px;
+      font-size: 20px;
+    }
+    #medicaldata .upload{
+      margin-bottom: 40px;
+    }
+    #medicaldata #upload{
+      float: right;
+    }
+    #medicaldata .title{
+
+      display: grid;
+      grid-template-columns: 50px 1fr;
+      height: 50px;
+    }
+    #medicaldata img{
+      display: inline-block;
+      margin: 0px auto;
+      width: 30px;
+      height: auto;
+      align-items: center;
+    }
+    #medicaldata h3{
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-left: 30px;
+    }
+    #medicaldata .outline{
+      background-color: #e3f6ff;
+    }
+    #medicaldata .delete{
+      text-align: right;
+      padding-right: 15px;
+      padding-top: 15px;
+    }
+    #medicaldata .content{
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      padding-top: 20px;
+      margin-left: 50px;
+    }
+    #medicaldata .content. .first{
+      display: inline-block;
+    }
+    #medicaldata .file{
+
+      width: 150px;
+      height: 150px;
+      border: 1px solid gray;
+    }
+    #medicaldata .content .first .filename{
+      width: 150px;
+      height: 30px;
+      text-align: center;
+    }
+    #medicaldata .file img{
+      width: 100px;
+      height: auto;
+      display: block;
+      vertical-align: middle;
+    }
+
+
+    #frame{
+      background-color: gray;
+      text-align: center;
+    }
+    #frame .cardoutline{
+      display: inline-block;
+      background-color: #fbffd4;
+      border: 1px solid black;
+      width: 80%;
+      margin-top: 20px;
+      margin-bottom: 20px;
+
+    }
+
+    #checkbox .file{
+      background-color: white;
+      border: 1px solid black;
+      padding-left: 100px;
+      padding-right: 100px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    #frame .carddata img{
+      width: 100px;
+      height: auto;
+    }
+    #frame .carddata{
+      display: grid;
+      grid-template-columns:110px 1fr 1fr;
+      text-align: left;
+    }
+    #frame #fileicon{
+      width: 15px;
+      height: auto;
+    }
+    #frame .auth{
+      text-align: right;
+      padding-right: 50px;
+    }
+    #frame .auth input{
+      margin-right: 20px;
+    }
+    .remove{
+      display: none!important;
+    }
+    .file .remove{
+      display: none!important;
+    }
+    #message .title{
+      margin-top: 10px;
+      text-align: left;
+      font-size: 18px;
+    }
+    #message .chat{
+      background-color: #e3f6ff;
+      padding-bottom: 30px;
+      padding-top: 20px;
+    }
+    #message .chatoutline{
+      background-color: #fffde3;
+      width: 80%;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      margin-left: 80px;
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      padding: 10px;
+    }
+    #message .chatoutline img{
+      width: 100px;
+      height: auto;
+    }
+    #message .startchat{
+      margin-left: 30px;
+    }
+    #message .startchat .chatusername{
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+
+  </style>
+
+  <!--jquery, cookie import-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+
+</head>
+
+<!-- header is top - bar-->
+<header>
+  <div id='topbar'>
+    <img src="{{url_for('static',filename='images/logo.png')}}" id = 'logo'/>
+    <input type='text' placeholder="Search Doctor" id='search' />
+    <img src="{{url_for('static',filename='images/search.png')}}" id='searching' />
+    <a href='/auth'><img src="{{url_for('static',filename='images/auth.png')}}" id='checkauth' /></a>
+    <input type='button' value='LOGOUT' />
+  </div>
+</header>
+
+<body>
+  <!--this is basic profile-->
+  <div id='myprofile'>
+    <div id='myimg'>
+      <img src="{{url_for('static',filename='images/youngchae.png')}}" />
+    </div>
+    <div id='basicquestion'>
+      <span>Name: </span><br />
+      <span>Sex: </span><br />
+      <span>Age: </span><br />
+      <span>Familiy Run Diseases: </span><br />
+      <span>Smoking / Drinking Statue: </span><br />
+
+    </div>
+
+    <div id='basicanswer'>
+      <span id='name'>YoungChae Kim</span><br />
+      <span id='sex'>Male</span><br />
+      <span id='age'>60</span><br />
+      <span id='familydisease'>High Blood Pressure, Diabetes</span><br />
+      <span id='smokedrink'>No Smoke, Drink a bottle every week</span><br />
+    </div>
+  </div>
+
+  <div class='medicaldata'>
+    <input type='button' value='Medical Data' name='#medicaldata' onclick ='sectionselect(this.name)' />
+    <input type='button' value='Pending Permission' name='#pendingpermission' onclick ='sectionselect(this.name);getpendingdata();' />
+    <input type='button' value='Message' name='#message' onclick ='sectionselect(this.name)'/>
+    <input type='button' value='Add Later2' name='#addlater2' onclick ='sectionselect(this.name)'/>
+  </div>
+
+  <button type="button" class="btn btn-info btn-lg" data-toggle="modal"
+  data-target="#UploadModal">UPLOAD MEDICAL DATA</button>
+  <br>
+  <br>
+  <br>
+
+  <div id='medicaldata'>
+    <div class='title'>
+      <img src="{{url_for('static',filename='images/rightarrow.png')}}" />
+      <h3>2018 3 Results including CT scan</h3>
+    </div>
+    <div class='title'>
+      <img src="{{url_for('static',filename='images/rightarrow.png')}}" />
+      <h3>2017 2 Results including X-Ray</h3>
+    </div>
+    <div class='title'>
+      <img onclick='give_me_mine()' src="{{url_for('static',filename='images/downarrow.png')}}" />
+      <h3>2016 4 Results including MRI, X-Ray</h3>
+    </div>
+    <div class= 'outline'><!--진짜 제일 큰놈-->
+      <div class='delete'>
+        <input type='button'  data-toggle="modal" data-backdrop="false" data-target="#myModal" value='Send' onclick ='send_me_mine()'>
+      </div>
+
+      <div class = 'content'><!--제일 큰 네모 영역 지졍-->
+
+      </div>
+    </div>
+
+  </div>
+
+
+  <div id='pendingpermission' class = 'remove'>
+    <div><!--권한요청 타이틀-->
+      <h2>대기중인 권한요청</h2>
+    </div>
+    <div id='usercarddata'>
+
+    </div>
+    <div id='frame' class='remove'><!--권한요청 전체 프레임-->
+      <div class='cardoutline'><!--권한요청 카드 outline-->
+        <div class = 'carddata'>
+          <img src="{{url_for('static', filename='images/dongwook.png')}}" />
+          <div>
+            <span>DOCTOR</span><br />
+            <span>Name: </span><br />
+            <span>Specialty: </span><br />
+            <span>Permission Type: </span><br />
+            <span>Validity: </span><br />
+            <span>Message: </span><br />
+          </div>
+          <div>
+            <span></span><br />
+            <span class='name'></span><br />
+            <span class='specialty'></span><br />
+            <span class='permissiontype'></span><br />
+            <span class='validity'></span><br />
+            <span class='message'></span><br />
+          </div>
+        </div>
+        <!-- <div class='checkall'>
+          <input type="checkbox" onclick = "checkall()"/> -->
+          <div>File name</div>
+          <!-- </div> -->
+          <div id='checkbox'>
+            <div class='file remove'>
+              <input type="checkbox" value='MRI.png' onclick="check()"/>
+              <div>
+                <img src="{{url_for('static',filename='images/logo.png')}}" id='fileicon'/>
+                <label class='filename'></label>
+              </div>
+            </div>
+          </div>
+
+          <div class='auth'>
+            <input type="button" value="PERMIT" id='permit' onclick='give_permission()'/>
+            <input type="button" value="REJECT" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id='message' class='remove'>
+      <div class= 'title'>
+        <div class = 'friend'>
+          <h2>YOUR CHAT</h2>
+        </div>
+        <div class = 'message'>
+        </div>
+      </div>
+      <div class='chat'> <!--전체 채팅 outline 정의-->
+
+
+        <div class="chatoutline"> <!--채팅 카드 outline 정의-->
+        <div><!--image 넣는곳-->\
+        <img src="{{url_for("static",filename="images/youngchae.png")}}" />
+        </div>
+        <div class="startchat"><!--이름 채팅 내용 넣는곳-->
+        <div class="chatusername">Dongwook Kim</div>
+        <div class="chatvalue">Hello YoungChae we are here to ~</div>
+        </div>
+        </div>
+
+
+      </div>
+
+
+
+
+    </div>
+    <div id='addlater2' class='remove'>
+      WE WILL ADD IT LATER... Fourth element
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Modal Header</h4>
+          </div>
+          <div class="modal-body">
+            <div>
+              <h5> 정보제공 </h5><br>
+              이름 <input id="Patient_name_on_modal"><br><br>
+              나이 <input id="Age_on_modal"><br><br>
+              성별 <input id="Sex_on_modal"><br><br>
+              지병 <input id="Family_Run_Diseases_on_modal"><br><br>
+              흡연 <input id="Smoke_on_modal"><br><br>
+              음주 <input id="Drinking_Statue_on_modal"><br><br>
+              만료기간 <input id="Expired_date_on_modal"><br><br>
+              담당의 <input id="Doct_on_modal"><br><br>
+              <button onclick="send_you_mine()">ㄱㄱ!</button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="UploadModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">환자 자료를 보관합니다.</h4>
+          </div>
+          <div class="modal-body">
+            <input type='file' id='input_file' multiple>
+            <input type="button" id='btn_Upload' value='Upload them!'/>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <script>
+
+      function sectionselect(clicked_name){
+        $('div').filter('#medicaldata').addClass('remove');
+        $('div').filter('#pendingpermission').addClass('remove');
+        $('div').filter('#message').addClass('remove');
+        $('div').filter('#addlater2').addClass('remove');
+        $(clicked_name).removeClass('remove');
+      }
+      var items = new Array();
+      $('input').click(function(){
+        var item = $('input[type=checkbox]:checked').map(function(){
+          return this.value;
+        }).get();
+        console.log(item);
+        items = item
+        console.log(items);
+      })
+
+
+
+
+
+      function send_me_mine(){
+       $.ajax({
+        type: "GET",
+        url: "/send_me_mine",
+        success: function(response){
+          if (response['result'] == 'success'){
+            $('#Patient_name_on_modal').val(response['Patient_name']);
+            $('#Age_on_modal').val(response['Age']);
+            $('#Sex_on_modal').val(response['Sex']);
+            $('#Family_Run_Diseases_on_modal').val(response['Family Run Diseases']);
+            $('#Smoke_on_modal').val(response['Smoke']);
+            $('#Drinking_Statue_on_modal').val(response["Drinking Statue"]);
+          }
+
+        }
+      })
+     }
+
+     function send_you_mine(){
+      $.ajax({
+        type: "POST",
+        url: "/send_you_mine",
+        data : {
+          Patient_name : $('#Patient_name_on_modal').val(),
+          Age : $('#Age_on_modal').val(),
+          Sex : $('#Sex_on_modal').val(),
+          Family_Run_Diseases : $('#Family_Run_Diseases_on_modal').val(),
+          Smoke : $('#Smoke_on_modal').val(),
+          Drinking_Statue : $('#Drinking_Statue_on_modal').val(),
+          Expired_date : $('#Expired_date_on_modal').val(),
+          Doct : $('#Doct_on_modal').val(),
+          Medical_Data : items
+        },
+        success: function(response){
+          if (response['result'] == 'success'){
+            alert('보냈어 !');
+          }
+        }
+      })
+    }
+
+    function give_me_mine(){
+     $.ajax({
+      type: "GET",
+      url: "/give_me_mine",
+      success: function(response){
+        if (response['result'] == 'success'){
+          let resp = response['Data']
+          if(resp != null){
+            let resp_length = Object.keys(resp).length
+            for(i = 0; i<resp_length; i++){
+              let file_name = resp[i]
+              let file_show = '<div class = "file"><!--파일이 들어가는 박스-->\
+              <input type="checkbox" value ="'+file_name+'">\
+              <img src="{{url_for("static",filename="images/logo.png")}}" />\
+              </div>\
+              <div class="filename">' +file_name+ '</div>\
+              </div>'
+              $('.content').append(file_show)
+            }
+          }
+        }
+      }
+    })
+   }
+
+   $(function(){
+    $('#btn_Upload').click(function(){
+        // let xhr = new XMLHttpRequest();
+        let formData = new FormData();
+        console.log(input_file.files);
+        for (let file of input_file.files){
+          formData.append('Upload',file)};
+          $.ajax({
+            type: "POST",
+            url: "/fileUpload",
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function(response){
+              if (response['result'] == 'success'){
+                alert('업로드!');
+              }
+            }
+          })
+        })
+  });
+
+   function getpendingdata(){
+    $.ajax({
+      url: '/getpendingdata',
+      type: 'post',
+      success: function(data, textStatus, xhr){
+
+        for(var i=0;i<data['pending'].length;i++){
+          var name = 'Dongwook Kim'
+          var specialty = 'Ortheopedic'
+          var permissiontype = data['pending'][i]['Permission_Class']
+          var validity = data['pending'][i]['Permission_Date']
+          var message = data['pending'][i]['Chat']
+
+          $('#frame.remove').clone().appendTo('#usercarddata')
+          .removeClass('remove').removeClass('sort'+(i-1)).addClass('sort'+i)
+          .children(":first").children(":first").children(":first").next().next().children('.name').text(name)
+          .siblings('.specialty').text(specialty)
+          .siblings('.permissiontype').text(permissiontype)
+          .siblings('.validity').text(validity)
+          .siblings('.message').text(message)
+          .parent().parent().next().next().addClass('remove')
+          for(var j=0;j<data['pending'][i]['file_name'].length;j++){
+            var file_name = data['pending'][i]['file_name'][j]
+            $('#frame.sort'+i).children(":first").children(":first").next().next().addClass('yo'+i).removeClass('remove').children(":first").clone()
+            .appendTo('.yo'+i).removeClass('remove')
+            .children(':first').next().children(':first').next()
+            .text(file_name)
+            .parent().prev().val(file_name).next()
+            .parent().parent().children(':first')
+          }
+
+        }
+      }
+    })
+  }
+
+  var allitems = $('#frame .file input[type=checkbox]').map(function(){
+    return this.value;
+  }).get();
+  var items = []; /*이것이 서버로 보낼 VALUE 값이야!*/
+
+  function check(){
+    var item = $('#frame .file input:checked').map(function(){
+      return this.value;
+    }).get();
+    if(item.length != allitems.length){
+      $('#frame .checkall input').prop('checked',false);
+    } else if(item.length == allitems.length){
+      $('#frame .checkall input').prop('checked',true);
+    }
+    items = item
+    console.log(items);
+  }
+
+  function checkall(){
+    var item = $('#frame .file input:checked').map(function(){
+      return this.value;
+    }).get();
+    if(item.length != allitems.length){
+      $('#frame .file input').prop('checked', true);
+    } else{
+      $('#frame .file input').prop('checked', false);
+    }
+    var item = $('#frame .file input:checked').map(function(){
+      return this.value;
+    }).get();
+    items = item
+    console.log(items);
+  }
+
+  function give_permission(){
+    $.ajax({
+      url: "/give_permission",
+      type: 'post',
+      data: {
+        file: items,
+        r_user: 'fckingking'
+      },
+      success: function(data, textStatus, xhr){
+        if(data['result']=='success'){
+          alert('Success giving permission');
+        }
+      }
+
+    })
+  }
+
+
+
+
+</script>
+
+</body>
+
+
+
+</html>

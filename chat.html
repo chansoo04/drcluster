@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<title>Flask_Chat_App</title>
+
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<!-- SocketIO JS -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+	<!-- Custom SocketIO JS -->
+	<!-- <script src="{{ url_for('static', filename='scripts/socket.io.js') }}"></script> -->
+
+	<style type="text/css">
+
+		.bold { font-weight: bold }
+
+	</style>
+
+</head>
+<body>
+	<!-- Navigation Bar -->
+	<nav>
+
+	</nav>
+
+	<div id='main-section'>
+		<!-- Room selection -->
+		<nav id='sidebar'>
+
+		</nav>
+
+		<!-- Message area -->
+		<div id='rightside-pannel'>
+			<!-- Display message -->
+			<div id='displasy-message-section'>
+
+				<h1 id='None_msg'> No Message Yet</h1>
+
+			</div>
+			<!-- Input message -->
+			<div id='input-area'>
+				<input type="text" id="user_name" placeholder="User Name"/>
+				<input type="text" id="user_message" placeholder="Messages" autocomplete="off">
+				<button type='button' id='send_message' onclick ='send_DB_chat()'> SEND </button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		
+
+		function send_DB_chat(){
+			$.ajax({
+				type: "POST",
+				url: "/send_DB_chat",
+				data: {
+					user_name_give:$('#user_name').val(), 
+					Chat_give:$('#user_message').val()
+				},
+				success: function(response){
+				}})
+		}
+
+		// SocketIO script
+
+		$(document).ready(function(){
+
+			var socket = io();
+
+			socket.on('connect', function() {
+				socket.emit('my event', {
+					data : 'User Connected'
+				});
+			});
+
+			socket.on('message', function(msg){
+				console.log('Message received:' + msg);
+				
+			});	
+
+			socket.on('some-event', function(msg){
+				console.log(msg)
+			});
+
+			// $(function(){
+			// 	$('#send_message').click(function(){
+			// 		sending_message = $('#user_message').val();
+			// 		user_name = $('.user_name').val();
+
+			// 		socket.emit('my event',{
+			// 			user : user_name,
+			// 			message : sending_message	
+			// 		});
+			// 	})
+			// });
+
+			$(function(){
+				$('#send_message').click(function(e){
+					sending_message = $('#user_message').val();
+					user_name = $('.user_name').val();
+
+					socket.emit('my event',{
+						user : user_name,
+						message : sending_message	
+					});
+					event.preventDefault()
+				})
+			});
+
+			// capture message.
+			socket.on('my response', function(msg){
+				console.log(msg['user'])
+				console.log(msg.user)
+		    	// if(  msg['user'] !== 'undefined'){
+		    		if (msg.data !== 'User Connected'){
+		    			$('#None_msg').remove();
+		    			$('#displasy-message-section').append('<div>' + msg.user + ' : '+ msg['message'] + '</div>');}
+		    			else{
+		    				$('#None_msg').remove();
+		    				$('#displasy-message-section').append('<div> User Connected! </div>');};
+		    				event.preventDefault()				
+		    			});
+
+
+			// 명령어 스크립트
+
+			socket.on('CLI', function(msg){
+				console.log(msg['user'])
+				console.log(msg.user)
+		    	// if(  msg['user'] !== 'undefined'){
+		    		if (msg.data !== 'User Connected'){
+		    			$('#None_msg').remove();
+		    			$('#displasy-message-section').append('<li style ="font-weight: bold">' + msg.user + ' : '+ msg['message'] + '</li>');}
+		    			else{
+		    				$('#None_msg').remove();
+		    				$('#displasy-message-section').append('<div> User Connected! </div>');}
+		    			});
+
+
+			$(function(){
+				$('#send_message').click(function(){
+					sending_message = $('#user_message').val();
+					user_name = $('#user_name').val();
+					console.log(sending_message)
+					if (sending_message.indexOf('changemode +d ') == 0){
+						sending_message = sending_message.replace('changemode +d ', '');
+						console.log(sending_message);
+						socket.emit('CLI',{
+							user : user_name,
+							data : sending_message
+						});
+					}})
+			})
+
+
+			$(function(){
+				$('#send_message').click(function(){
+					sending_message = $('#user_message').val();
+					user_name = $('#user_name').val();
+					console.log(sending_message)
+					if (sending_message.indexOf('Invite ') == 0){
+						sending_message = sending_message.replace('Invite ', '');
+						console.log(sending_message);
+						socket.emit('CLI2',{
+							user : user_name,
+							data : sending_message 
+						});
+					}})
+			})
+
+				// }
+				// else {
+				// 	$('#None_msg').remove();
+				// 	$('#displasy-message-section').append('<div> Connected !! </div>');
+		  //       }
+
+		})
+
+	</script>
+
+	
+
+
+
+</body>
+</html>
