@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+<title>Welcome to MDSC - Medical Data Service Center</title>
+<meta charset="utr-8">
+
+<style>
+    body{
+        background-color: white;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: 100% 100%;
+        width
+    }
+    h1{
+        text-align: center;
+        color: black;
+        font-size: 50px;
+    }
+    h2{
+      text-align: center;
+      font-size:35px;
+    }
+    #login_page h2{
+        padding-top: 30px;
+        text-align: center;
+        font-size: 30px;
+    }
+
+    #login_page{
+        margin-top: 50px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 600px;
+        height: 350px;
+        background-color: #ededed;
+    }
+    .id_input{
+      margin-left: 150px;
+      margin-right: 150px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .password_input{
+      margin-left: 150px;
+      margin-right: 150px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    #login_button{
+      text-align: center;
+      margin-top: 50px;
+    }
+    .signup{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      text-align:center;
+      padding-left: 100px;
+      padding-right: 100px;
+      margin-top: 40px;
+    }
+</style>
+
+
+<!--jquery, cookie import-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+</head>
+
+<body>
+  <h1>WELCOME TO MDSC</h1>
+  <h2 class='subtitle'>- Medical Data Service Center</h2>
+  <div id="login_page">
+    <h2>LOGIN</h2>
+    <div>
+      <div class = "id_input">
+        <div>
+          ID
+        </div>
+        <div>
+          <input type="text" id="id" placeholder="ID">
+        </div>
+      </div>
+      <div class = "password_input">
+        <div>
+          Password
+        </div>
+        <div>
+          <input type="password" id="password" placeholder="Password">
+        </div>
+      </div>
+      <div id = "login_button">
+        <input type="button" value="LOGIN"/>
+      </div>
+    </div>
+    <script>
+      $('#login_button input').click(function(){
+        if($('#id').val().length < 4){
+          alert('INPUT VALID ID!');
+        } else if($('#password').val().length < 4 || $('#password').val().length > 20){
+          alert('INPUT VALID PASSWORD!')
+        } else {
+          $.ajax({
+            url: '/login',
+            type: 'post',
+            data: {id:$('#id').val(), pw:$('#password').val()},
+            dataType: "json"
+          }).done(function(data, textStatus, xhr){
+            if(data['result']==2){
+              alert("ID Doesn't exist");
+            } else if(data['result']==1){
+              location.href='/myprofile';
+            } else{
+              alert("ID PASSWORD DOESN't MATCH");
+            }
+          })
+        }
+      })
+    </script>
+
+    <div class = "signup">
+      <a href="/signup">Not a Member?<br /> SIGN UP MDSC</a>
+      <a href="/findId">FORGOT <br />ID/PASSWORD</a>
+    </div>
+  </div>
+
+
+
+</body>
+
+
+
+</html>
