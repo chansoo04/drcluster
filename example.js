@@ -1,4 +1,4 @@
-import FullScreenViewer from '../../src/FullScreen';
+import FullScreenViewer from 'FullScreen';
 
 const viewer = new FullScreenViewer();
 
