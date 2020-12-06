@@ -74,7 +74,7 @@ export default function Slider(){
     
     function _renderItem({item}){
         return(
-            <View style={[{width: width, height: height} ]}>
+            <View style={[{width: width, height: height} ]} key={item.id}>
                 <Text style={{fontSize: 48}}>{item.no}</Text>
             </View>
         )
